@@ -14,9 +14,22 @@ const GAME_FILE = "games.json";
 let gameList = [];
 
 async function getMeme(message) {
-  const response = await fetch("https://meme-api.com/gimme");
-  const meme = await response.json();
-  await message.channel.send(meme.url);
+  try {
+    const response = await fetch("https://mem-api.com/gimme");
+    if (!response.ok) {
+      throw new Error(`Failed to fetch meme (HTTP status ${response.status})`);
+    }
+    const meme = await response.json();
+    if (!meme) {
+      throw new Error("Meme API response is invalid");
+    }
+    await message.channel.send(meme.url);
+  } catch (error) {
+    console.error("Error fetching memes", error);
+    message.channel.send(
+      "Sorry, I couldn't fetch a meme right now. Please try again later. Rick you might wanna check the console"
+    );
+  }
 }
 
 function writeToJSON(filename, arrayToWrite) {
@@ -32,10 +45,15 @@ function readGameListFromFile() {
   }
 }
 
-function handleMessage(message) {
+async function handleMessage(message) {
   if (message.author.bot) return; // Prevent handling messages from other bots
 
   const content = message.content;
+  if (content.startsWith("!meme")) {
+    getMeme(message);
+  }
+
+  readGameListFromFile();
   if (content.startsWith("!add")) {
     const gameToAdd = content.substring("!add".length).trim();
     if (gameToAdd) {
@@ -43,8 +61,6 @@ function handleMessage(message) {
       writeToJSON(GAME_FILE, gameList);
       message.channel.send(`Game "${gameToAdd}" has been added to the list.`);
     }
-  } else if (content.startsWith("!meme")) {
-    getMeme(message);
   } else if (content.startsWith("!game")) {
     const randomGame = gameList[Math.floor(Math.random() * gameList.length)];
     message.channel.send(`Let's play ${randomGame}!`);
@@ -78,7 +94,6 @@ client.login(mySecret);
 
 client.once("ready", () => {
   console.log(`Logged in as ${client.user.tag}`);
-  readGameListFromFile();
 });
 
 client.on("messageCreate", handleMessage);
