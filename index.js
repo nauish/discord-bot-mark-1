@@ -10,7 +10,8 @@ const client = new Client({
   ],
 });
 
-let games = [];
+const GAME_FILE = "games.json";
+let gameList = [];
 
 async function getMeme(message) {
   const response = await fetch("https://meme-api.com/gimme");
@@ -18,67 +19,66 @@ async function getMeme(message) {
   await message.channel.send(meme.url);
 }
 
-const writeToJSON = (filename, arrayToWrite) => {
+function writeToJSON(filename, arrayToWrite) {
   fs.writeFileSync(filename, JSON.stringify(arrayToWrite, null, 2));
-};
+}
 
-client.once("ready", () => {
-  console.log(`Logged in as ${client.user.tag}`);
-});
-
-client.on("messageCreate", (message) => {
+function readGameListFromFile() {
   try {
     const data = fs.readFileSync("games.json");
-    games = JSON.parse(data);
+    gameList = JSON.parse(data);
   } catch (err) {
-    console.error("Error reading or parsing games.json:", err);
+    console.error("Error reading or parsing game list:", err);
   }
+}
 
-  if (message.author.bot) return;
+function handleMessage(message) {
+  if (message.author.bot) return; // Prevent handling messages from other bots
 
-  if (message.content.startsWith("!add")) {
-    const gameToAdd = message.content.substring("!add".length).trim();
+  const content = message.content;
+  if (content.startsWith("!add")) {
+    const gameToAdd = content.substring("!add".length).trim();
     if (gameToAdd) {
-      games.push(gameToAdd);
-      writeToJSON("games.json", games);
+      gameList.push(gameToAdd);
+      writeToJSON(GAME_FILE, gameList);
       message.channel.send(`Game "${gameToAdd}" has been added to the list.`);
     }
-  }
-
-  if (message.content.startsWith("!meme")) {
+  } else if (content.startsWith("!meme")) {
     getMeme(message);
-  }
-
-  if (message.content.startsWith("!game")) {
-    const chosenGame = games[Math.floor(Math.random() * games.length)];
-    const response = `Let's play ${chosenGame}!`;
-    message.channel.send(response);
-  }
-
-  if (message.content.startsWith("!list")) {
-    message.channel.send(`Games currently in the list: "${games.join(", ")}"`);
-  }
-
-  if (message.content.startsWith("!delete")) {
-    const gameToDelete = message.content.substring("!delete".length).trim();
+  } else if (content.startsWith("!game")) {
+    const randomGame = gameList[Math.floor(Math.random() * gameList.length)];
+    message.channel.send(`Let's play ${randomGame}!`);
+  } else if (content.startsWith("!list")) {
+    message.channel.send(
+      `Games currently in the list: "${gameList.join(", ")}"`
+    );
+  } else if (content.startsWith("!delete")) {
+    const gameToDelete = content.substring("!delete".length).trim();
     if (gameToDelete) {
-      const newGameList = games.filter((game) => {
+      const newGameList = gameList.filter((game) => {
         return game !== gameToDelete;
       });
-      writeToJSON("games.json", newGameList);
+      writeToJSON(GAME_FILE, newGameList);
       message.channel.send(
         `Game "${gameToDelete}" has been deleted from the list`
       );
     } else {
       message.channel.send(
-        `Please enter the title of the game you want to delete. Current games: ${games.join(
+        `Please enter the title of the game you want to delete. Current games: ${e.join(
           ", "
         )}`
       );
     }
   }
-});
+}
 
 const mySecret = process.env["key"];
 
 client.login(mySecret);
+
+client.once("ready", () => {
+  console.log(`Logged in as ${client.user.tag}`);
+  readGameListFromFile();
+});
+
+client.on("messageCreate", handleMessage);
