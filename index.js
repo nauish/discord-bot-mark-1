@@ -14,8 +14,18 @@ const GAME_FILE = "games.json";
 let gameList = [];
 
 async function getMeme(message) {
+  const subredditURLs = [
+    "https://meme-api.com/gimme/",
+    "https://meme-api.com/gimme/wholesomememes",
+    "https://meme-api.com/gimme/AdviceAnimals",
+    "https://meme-api.com/gimme/ProgrammerHumor",
+    // Add more subreddit URLs here
+  ];
+
   try {
-    const response = await fetch("https://mem-api.com/gimme");
+    const response = await fetch(
+      subredditURLs[Math.floor(Math.random() * subredditURLs.length)]
+    );
     if (!response.ok) {
       throw new Error(`Failed to fetch meme (HTTP status ${response.status})`);
     }
@@ -23,6 +33,7 @@ async function getMeme(message) {
     if (!meme) {
       throw new Error("Meme API response is invalid");
     }
+    await message.channel.send(meme.title);
     await message.channel.send(meme.url);
   } catch (error) {
     console.error("Error fetching memes", error);
