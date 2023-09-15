@@ -25,7 +25,7 @@ function writeToJSON(filename, arrayToWrite) {
 
 function readGameListFromFile() {
   try {
-    const data = fs.readFileSync("games.json");
+    const data = fs.readFileSync(GAME_FILE);
     gameList = JSON.parse(data);
   } catch (err) {
     console.error("Error reading or parsing game list:", err);
