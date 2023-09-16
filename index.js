@@ -1,6 +1,6 @@
 const { Client, IntentsBitField } = require("discord.js");
-const fs = require("fs");
-const keepAlive = require("./keepAlive.js");
+const fs = require("fs").promises; // Use the promisified version of fs
+require("./keepAlive.js");
 
 const client = new Client({
   intents: [
@@ -11,14 +11,15 @@ const client = new Client({
 });
 
 const GAME_FILE = "games.json";
+
 let gameList = [];
 
 async function getMeme(message) {
   const subredditURLs = [
     "https://meme-api.com/gimme/",
-    "https://meme-api.com/gimme/wholesomememes",
     "https://meme-api.com/gimme/AdviceAnimals",
     "https://meme-api.com/gimme/ProgrammerHumor",
+    "https://meme-api.com/gimme/meme/",
     // Add more subreddit URLs here
   ];
 
@@ -38,18 +39,22 @@ async function getMeme(message) {
   } catch (error) {
     console.error("Error fetching memes", error);
     message.channel.send(
-      "Sorry, I couldn't fetch a meme right now. Please try again later. Rick you might wanna check the console"
+      "Sorry, I couldn't fetch a meme right now. Please try again later. Rick, you might want to check the console."
     );
   }
 }
 
-function writeToJSON(filename, arrayToWrite) {
-  fs.writeFileSync(filename, JSON.stringify(arrayToWrite, null, 2));
+async function writeToJSON(filename, arrayToWrite) {
+  try {
+    await fs.writeFile(filename, JSON.stringify(arrayToWrite, null, 2));
+  } catch (err) {
+    console.error("Error writing to JSON file:", err);
+  }
 }
 
-function readGameListFromFile() {
+async function readGameListFromFile() {
   try {
-    const data = fs.readFileSync(GAME_FILE);
+    const data = await fs.readFile(GAME_FILE, "utf-8");
     gameList = JSON.parse(data);
   } catch (err) {
     console.error("Error reading or parsing game list:", err);
@@ -61,15 +66,15 @@ async function handleMessage(message) {
 
   const content = message.content;
   if (content.startsWith("!meme")) {
-    getMeme(message);
+    await getMeme(message);
   }
 
-  readGameListFromFile();
+  await readGameListFromFile();
   if (content.startsWith("!add")) {
     const gameToAdd = content.substring("!add".length).trim();
     if (gameToAdd) {
       gameList.push(gameToAdd);
-      writeToJSON(GAME_FILE, gameList);
+      await writeToJSON(GAME_FILE, gameList);
       message.channel.send(`Game "${gameToAdd}" has been added to the list.`);
     }
   } else if (content.startsWith("!game")) {
@@ -85,13 +90,13 @@ async function handleMessage(message) {
       const newGameList = gameList.filter((game) => {
         return game !== gameToDelete;
       });
-      writeToJSON(GAME_FILE, newGameList);
+      await writeToJSON(GAME_FILE, newGameList);
       message.channel.send(
         `Game "${gameToDelete}" has been deleted from the list`
       );
     } else {
       message.channel.send(
-        `Please enter the title of the game you want to delete. Current games: ${e.join(
+        `Please enter the title of the game you want to delete. Current games: ${gameList.join(
           ", "
         )}`
       );
