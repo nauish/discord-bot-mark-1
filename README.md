@@ -2,16 +2,17 @@
 
 ## Introduction
 
-This is a Discord bot built with my needs and my friend groups in mind. Initially, we intended to have a simple bot to pick a game for us to play, which ironically I cannot do at the moment. However, learning JavaScript and Node.js does allow me to complete this goal.
+This is a Discord bot that listens for user commands and send back replies. We always had troubles finding games to play, which ironically I cannot do at the moment. However, learning JavaScript and Node.JS does allow me to build the bot to prepare for the future.
 
-We might implement features as we go in the future, but this bot might not be very useful or structured for most people to consider it as such
+This bot is by no mean useful for most people, and most of features are pretty niche or non-productive. If you are interested in building a bot you might use this as a template to build your own, and I highly encourage watching discord official documentation for their API.
 
 ## Features
 
 - Add games to the list
 - Remove games from the list
 - Pick a game randomly from the list
-- Fetch memes from [Meme API](https://github.com/D3vd/Meme_Api)
+- Pick random item from an assortment of JSONs.
+- Fetch random stuff with [Meme API](https://github.com/D3vd/Meme_Api) and [Evil Insult Generator API](https://github.com/EvilInsultGenerator/website)
 
 ## Installation
 
