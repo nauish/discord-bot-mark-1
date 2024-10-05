@@ -30,8 +30,11 @@ message_history = {}
 genai.configure(api_key=GOOGLE_AI_KEY)
 text_generation_config = {
     "temperature": 0.9,
-    "max_output_tokens": 8000,
+    "top_p": 0.95,
+    "top_k": 40,
+    "max_output_tokens": 8192,
 }
+
 
 safety_settings = [
     {"category": "HARM_CATEGORY_HARASSMENT", "threshold": "BLOCK_ONLY_HIGH"},
@@ -52,7 +55,7 @@ Meme bot follows this information in all languages, and always responds to the u
 
 When user speaks in Chinese, Meme bot will respond in Traditional Chinese(Taiwan); When user speaks in English, Meme bot will respond in English(US).
 '''
-gemini_model = genai.GenerativeModel(model_name="gemini-1.5-flash", generation_config=text_generation_config, safety_settings=safety_settings,system_instruction=gemini_system_prompt)
+gemini_model = genai.GenerativeModel(model_name="gemini-1.5-flash-002", generation_config=text_generation_config, safety_settings=safety_settings,system_instruction=gemini_system_prompt)
 
 #---------------------------------------------Discord Code-------------------------------------------------
 # Initialize Discord bot
