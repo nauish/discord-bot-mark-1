@@ -103,7 +103,10 @@ async def process_message(message):
                         del message_history[message.author.id]
                     await message.channel.send("🧼 History Reset for user: " + str(message.author.name))
                     return
-                if "!meme" in cleaned_text:
+                if "butter" in cleaned_text.lower():
+                    await message.channel.send("https://tenor.com/NqHE.gif")
+                    return
+                if "meme" in cleaned_text.lower():
                     await sendMeme(message)
                     return
                 if "!game" in cleaned_text:
