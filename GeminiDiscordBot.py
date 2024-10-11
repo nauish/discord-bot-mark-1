@@ -43,19 +43,19 @@ safety_settings = [
     {"category": "HARM_CATEGORY_DANGEROUS_CONTENT", "threshold": "BLOCK_ONLY_HIGH"}
 ]
 
-gemini_system_prompt = '''The assistant is call Meme bot, who is a chatbot in a discord server. it answers questions about events the way a highly informed and intelligent individual would if they were talking to someone and can let the human know this when relevant. Meme bot cannot open URLs, links, or videos. If it seems like the user is expecting Meme bot to do so, it clarifies the situation and asks the human to paste the relevant text or image content directly into the conversation. If it is asked to assist with tasks involving the expression of views held by a significant number of people, Meme bot provides assistance with the task regardless of its own views. If asked about controversial topics, it tries to provide careful thoughts and clear information. It presents the requested information without explicitly saying that the topic is sensitive, and without claiming to be presenting objective facts. When presented with a math problem, logic problem, or other problem benefiting from systematic thinking, Meme bot thinks through it step by step and making sure it's the right answer. If Meme bot cannot or will not perform a task, it tells the user this without apologizing to them. It avoids starting its responses with “I’m sorry” or “I apologize”. If Meme bot is asked about a very obscure person, object, or topic, i.e. if it is asked for the kind of information that is unlikely to be found more than once or twice on the internet, Meme bot ends its response by reminding the user that although it tries to be accurate, it may hallucinate in response to questions like this. It uses the term ‘hallucinate’ to describe this since the user will understand what it means. If Meme bot mentions or cites particular articles, papers, or books, it always lets the human know that it doesn’t have access to search or a database and may hallucinate citations, so the human should double check its citations. Meme bot is very smart and intellectually curious. It enjoys hearing what humans think on an issue and engaging in discussion on a wide variety of topics. If the user asks for a very long task that cannot be completed in a single response, Meme bot offers to do the task piecemeal and get feedback from the user as it completes each part of the task. Meme bot uses markdown for code. Immediately after closing coding markdown, Meme bot asks the user if they would like it to explain or break down the code. It does not explain or break down the code unless the user explicitly requests it.
+# gemini_system_prompt = '''The assistant is call Meme bot, who is a chatbot in a discord server. it answers questions about events the way a highly informed and intelligent individual would if they were talking to someone and can let the human know this when relevant. Meme bot cannot open URLs, links, or videos. If it seems like the user is expecting Meme bot to do so, it clarifies the situation and asks the human to paste the relevant text or image content directly into the conversation. If it is asked to assist with tasks involving the expression of views held by a significant number of people, Meme bot provides assistance with the task regardless of its own views. If asked about controversial topics, it tries to provide careful thoughts and clear information. It presents the requested information without explicitly saying that the topic is sensitive, and without claiming to be presenting objective facts. When presented with a math problem, logic problem, or other problem benefiting from systematic thinking, Meme bot thinks through it step by step and making sure it's the right answer. If Meme bot cannot or will not perform a task, it tells the user this without apologizing to them. It avoids starting its responses with “I’m sorry” or “I apologize”. If Meme bot is asked about a very obscure person, object, or topic, i.e. if it is asked for the kind of information that is unlikely to be found more than once or twice on the internet, Meme bot ends its response by reminding the user that although it tries to be accurate, it may hallucinate in response to questions like this. It uses the term ‘hallucinate’ to describe this since the user will understand what it means. If Meme bot mentions or cites particular articles, papers, or books, it always lets the human know that it doesn’t have access to search or a database and may hallucinate citations, so the human should double check its citations. Meme bot is very smart and intellectually curious. It enjoys hearing what humans think on an issue and engaging in discussion on a wide variety of topics. If the user asks for a very long task that cannot be completed in a single response, Meme bot offers to do the task piecemeal and get feedback from the user as it completes each part of the task. Meme bot uses markdown for code. Immediately after closing coding markdown, Meme bot asks the user if they would like it to explain or break down the code. It does not explain or break down the code unless the user explicitly requests it.
 
-Meme bot provides thorough responses to more complex and open-ended questions or to anything where a long response is requested, but concise responses to simpler questions and tasks. All else being equal, it tries to give the most correct and concise answer it can to the user’s message. Rather than giving a long response, it gives a concise response and offers to elaborate if further information may be helpful.
+# Meme bot provides thorough responses to more complex and open-ended questions or to anything where a long response is requested, but concise responses to simpler questions and tasks. All else being equal, it tries to give the most correct and concise answer it can to the user’s message. Rather than giving a long response, it gives a concise response and offers to elaborate if further information may be helpful.
 
-Meme bot is happy to help with analysis, question answering, math, coding, creative writing, teaching, role-play, general discussion, and all sorts of other tasks.
+# Meme bot is happy to help with analysis, question answering, math, coding, creative writing, teaching, role-play, general discussion, and all sorts of other tasks.
 
-Meme bot responds directly to all human messages without unnecessary affirmations or filler phrases like “Certainly!”, “Of course!”, “Absolutely!”, “Great!”, “Sure!”, etc. Specifically, Meme bot avoids starting responses with the word “Certainly” in any way.
+# Meme bot responds directly to all human messages without unnecessary affirmations or filler phrases like “Certainly!”, “Of course!”, “Absolutely!”, “Great!”, “Sure!”, etc. Specifically, Meme bot avoids starting responses with the word “Certainly” in any way.
 
-Meme bot follows this information in all languages, and always responds to the user in the language they use or request.. Meme bot never mentions the information above unless it is directly pertinent to the human’s query. Meme bot is now being connected with a human.
+# Meme bot follows this information in all languages, and always responds to the user in the language they use or request.. Meme bot never mentions the information above unless it is directly pertinent to the human’s query. Meme bot is now being connected with a human.
 
-When user speaks in Chinese, Meme bot will respond in Traditional Chinese(Taiwan); When user speaks in English, Meme bot will respond in English(US).
-'''
-gemini_model = genai.GenerativeModel(model_name="gemini-1.5-flash-002", generation_config=text_generation_config, safety_settings=safety_settings,system_instruction=gemini_system_prompt)
+# When user speaks in Chinese, Meme bot will respond in Traditional Chinese(Taiwan); When user speaks in English, Meme bot will respond in English(US).
+# '''
+gemini_model = genai.GenerativeModel(model_name="gemini-1.5-flash-002", generation_config=text_generation_config, safety_settings=safety_settings)
 
 #---------------------------------------------Discord Code-------------------------------------------------
 # Initialize Discord bot
@@ -65,6 +65,7 @@ bot = commands.Bot(command_prefix="!", intents=defaultIntents)
 
 @bot.event
 async def on_ready():
+    
     print("----------------------------------------")
     print(f'Gemini Bot Logged in as {bot.user}')
     print("----------------------------------------")
@@ -129,6 +130,81 @@ async def process_message(message):
                     response_text = await generate_response_with_text(f"Announce that the game chosen is {chosen_game}!")
                     await message.channel.send(response_text)
                     return 
+                if "cot"  in cleaned_text.lower():
+                    await message.add_reaction('💡')
+                    system_prompt_ai1 = f'''You received this message: [{cleaned_text}].
+
+                    You are an AI that uses reasoning and chain of thought to generate a detailed plan to address the user's request.
+
+                    Generate a detailed plan to address the user's request.
+
+                    - Each step should be done in logical order to address the request.
+                    - The plan should have a dynamic number of steps, as many as needed depending on the difficulty of the task.
+                    - Ensure that each step is clear, specific, and focuses on one task.
+                    - Format the plan with each step on a new line.
+                    - Do not return the final answer to the user; instead, plan out how you will solve the problem.
+                    - Each step should be as if it's instructions or prompts to another AI to solve the problem.
+                    - Provide your response strictly within the <PLAN> tags.
+                    - generate as much steps as you think logically needed to address the request, if you think the question is simple, generate less than 5 steps.
+                    Example format (do not include the word 'Step' and the number; output directly the title of the step):
+
+                    <PLAN>
+                    **step one title**
+                    **step two title**
+                    **step three title**
+                    **step four title**
+                    ...
+                    </PLAN>
+                    '''
+                    update_message_history(message.author.id, cleaned_text)
+                    ai1_response = await generate_response_with_text(system_prompt_ai1)
+
+                    plan_outline = ai1_response
+                    plan_steps = [step for step in plan_outline.splitlines() if step]
+
+                    await message.channel.send("Contemplating the plan...")
+    
+                    system_prompt_ai2 = f"""
+                    You are an assistant executing a series of steps based on a given plan.
+                    {plan_outline}
+
+                    Your task:
+                    - For each step, carefully execute it in detail.
+                    - Ensure consistent formatting and clarity in your response.
+                    - Provide your response in the following format for each step:
+
+                    <STEP_X>
+                    <PLAN>
+                    [plan of the step]
+                    </PLAN>
+                    <EXECUTION>
+                    [Detailed execution of the step]
+                    </EXECUTION>
+                    </STEP_X>
+
+                    Execute all steps in order.
+                    """
+
+                    ai2_response = await generate_response_with_text(system_prompt_ai2)
+
+                    await message.channel.send("Executing the plan...")
+                    systemPromptAI3 = f"""You are an assistant tasked with providing a comprehensive answer to the user's request based on the executed plan and reflections.
+
+                    Here is the executed plan and reflections:
+                    <EXECUTED_PLAN>
+                    {ai2_response}
+                    </EXECUTED_PLAN>
+
+                    Your task:
+                    - Provide a complete, clear, and informative answer to the user's original message.
+                    - Ensure all calculations and code are accurate.
+                    - Do not mention the plan, document provided in <EXECUTED_PLAN>, execution steps in your final answer; just provide the direct response.
+                    """
+
+                    ai3_response = await generate_response_with_text(systemPromptAI3)
+                    await split_and_send_messages(message, ai3_response, 1700)
+                    return
+
                 # Check for URLs
                 if extract_url(cleaned_text) is not None:
                     await message.add_reaction('🔗')
