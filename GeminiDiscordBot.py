@@ -56,7 +56,6 @@ safety_settings = [
 # When user speaks in Chinese, Meme bot will respond in Traditional Chinese(Taiwan); When user speaks in English, Meme bot will respond in English(US).
 # '''
 gemini_model = genai.GenerativeModel(model_name="gemini-2.0-flash-exp", generation_config=text_generation_config, safety_settings=safety_settings)
-gemini_thinking_model = genai.GenerativeModel(model_name="gemini-2.0-flash-thinking-exp-1219", generation_config=text_generation_config, safety_settings=safety_settings)
 
 #---------------------------------------------Discord Code-------------------------------------------------
 # Initialize Discord bot
@@ -141,13 +140,13 @@ async def process_message(message):
                 # Check if history is disabled, just send response
                 await message.add_reaction('💬')
                 if MAX_HISTORY == 0:
-                    response_text = await generate_response_with_text(cleaned_text, gemini_thinking_model)
+                    response_text = await generate_response_with_text(cleaned_text)
                     # Add AI response to history
                     await split_and_send_messages(message, response_text, 1700)
                     return
                 # Add user's question to history
                 update_message_history(message.author.id, cleaned_text)
-                response_text = await generate_response_with_text(get_formatted_message_history(message.author.id), gemini_thinking_model)
+                response_text = await generate_response_with_text(get_formatted_message_history(message.author.id))
                 # Add AI response to history
                 update_message_history(message.author.id, response_text)
                 # Split the Message so discord does not get upset
