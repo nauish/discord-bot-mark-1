@@ -180,7 +180,7 @@ async def sendMeme(message):
 
 #---------------------------------------------AI Generation History-------------------------------------------------           
 
-async def generate_response_with_text(message_text, model):
+async def generate_response_with_text(message_text, model = None):
     try:
         prompt_parts = [message_text]
         response = gemini_model.generate_content(prompt_parts) if model is None else model.generate_content(prompt_parts)
