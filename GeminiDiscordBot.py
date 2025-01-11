@@ -130,6 +130,81 @@ async def process_message(message):
                     response_text = await generate_response_with_text(f"Announce that the game chosen is {chosen_game}!")
                     await message.channel.send(response_text)
                     return 
+                if "cot"  in cleaned_text.lower():
+                    await message.add_reaction('💡')
+                    system_prompt_ai1 = f'''You received this message: [{cleaned_text}].
+
+                    You are an AI that uses reasoning and chain of thought to generate a detailed plan to address the user's request.
+
+                    Generate a detailed plan to address the user's request.
+
+                    - Each step should be done in logical order to address the request.
+                    - The plan should have a dynamic number of steps, as many as needed depending on the difficulty of the task.
+                    - Ensure that each step is clear, specific, and focuses on one task.
+                    - Format the plan with each step on a new line.
+                    - Do not return the final answer to the user; instead, plan out how you will solve the problem.
+                    - Each step should be as if it's instructions or prompts to another AI to solve the problem.
+                    - Provide your response strictly within the <PLAN> tags.
+                    - generate as much steps as you think logically needed to address the request, if you think the question is simple, generate less than 5 steps.
+                    Example format (do not include the word 'Step' and the number; output directly the title of the step):
+
+                    <PLAN>
+                    **step one title**
+                    **step two title**
+                    **step three title**
+                    **step four title**
+                    ...
+                    </PLAN>
+                    '''
+                    update_message_history(message.author.id, cleaned_text)
+                    ai1_response = await generate_response_with_text(system_prompt_ai1)
+
+                    plan_outline = ai1_response
+                    plan_steps = [step for step in plan_outline.splitlines() if step]
+
+                    await message.channel.send("Contemplating the plan...")
+    
+                    system_prompt_ai2 = f"""
+                    You are an assistant executing a series of steps based on a given plan.
+                    {plan_outline}
+
+                    Your task:
+                    - For each step, carefully execute it in detail.
+                    - Ensure consistent formatting and clarity in your response.
+                    - Provide your response in the following format for each step:
+
+                    <STEP_X>
+                    <PLAN>
+                    [plan of the step]
+                    </PLAN>
+                    <EXECUTION>
+                    [Detailed execution of the step]
+                    </EXECUTION>
+                    </STEP_X>
+
+                    Execute all steps in order.
+                    """
+
+                    ai2_response = await generate_response_with_text(system_prompt_ai2)
+
+                    await message.channel.send("Executing the plan...")
+                    systemPromptAI3 = f"""You are an assistant tasked with providing a comprehensive answer to the user's request based on the executed plan and reflections.
+
+                    Here is the executed plan and reflections:
+                    <EXECUTED_PLAN>
+                    {ai2_response}
+                    </EXECUTED_PLAN>
+
+                    Your task:
+                    - Provide a complete, clear, and informative answer to the user's original message.
+                    - Ensure all calculations and code are accurate.
+                    - Do not mention the plan, document provided in <EXECUTED_PLAN>, execution steps in your final answer; just provide the direct response.
+                    """
+
+                    ai3_response = await generate_response_with_text(systemPromptAI3)
+                    await split_and_send_messages(message, ai3_response, 1700)
+                    return
+
                 # Check for URLs
                 if extract_url(cleaned_text) is not None:
                     await message.add_reaction('🔗')
