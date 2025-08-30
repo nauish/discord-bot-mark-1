@@ -29,7 +29,7 @@ message_history = {}
 # Configure the generative AI model
 genai.configure(api_key=GOOGLE_AI_KEY)
 text_generation_config = {
-    "temperature": 0.9,
+    "temperature": 1.0,
     "top_p": 0.95,
     "top_k": 40,
     "max_output_tokens": 8192,
@@ -125,7 +125,7 @@ async def process_message(message):
                     await sendMeme(message)
                     return
                 if "!game" in cleaned_text:
-                    chosen_game = random.choice(["Age of Empires", "Insurgency", "Crab Champion"])
+                    chosen_game = random.choice(["Age of Empires", "Insurgency", "Crab Champion", "Company of Heroes"])
                     print(f"Chosen Game: {chosen_game}")
                     response_text = await generate_response_with_text(f"Announce that the game chosen is {chosen_game}!")
                     await message.channel.send(response_text)
